@@ -41,7 +41,8 @@ function App() {
   }, [clicked]);
 
   return (
-    <div className="flex min-h-screen px-5 flex-col min-w-screen max-w-screen  bg-gradient-to-r from-sky-400 via-rose-400 to-lime-400">
+    <div className="flex min-h-screen px-5 flex-col min-w-screen max-w-screen
+    ">
       <h1 className="w-fit m-auto text-black text-5xl p-3 shadow-sm rounded-3xl">
         <b>WEB WORKERS</b> 🤖 say giberish...
       </h1>
