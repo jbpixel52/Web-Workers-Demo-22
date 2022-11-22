@@ -27,7 +27,5 @@ export function Generator(iterations, id) {
       maxLength = baseLength;
     }
   }
-  //reportWebVitals(console.log);
-
   return generated;
 }
