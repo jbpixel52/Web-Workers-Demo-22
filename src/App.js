@@ -12,8 +12,8 @@ function App() {
   const [message1, setMessage1] = React.useState(null);
   const [message2, setMessage2] = React.useState(null);
   const [clicked, setClicked] = React.useState(false);
-  const [message1Len, setMessage1Len] = React.useState(1);
-  const [message2Len, setMessage2Len] = React.useState(1);
+  const [message1Len, setMessage1Len] = React.useState(1000);
+  const [message2Len, setMessage2Len] = React.useState(1000);
 
   let startTime = new Date().getTime();
   //console.log(`start time: ${startTime}`);
