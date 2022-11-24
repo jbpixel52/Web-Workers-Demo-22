@@ -9,15 +9,23 @@ const createWorker = createWorkerFactory(() => import("./worker"));
 function App() {
   const worker1 = useWorker(createWorker);
   const worker2 = useWorker(createWorker);
+  const [ clicked, setClicked ] = React.useState(false);
+
   const [message1, setMessage1] = React.useState(null);
   const [message2, setMessage2] = React.useState(null);
-  const [clicked, setClicked] = React.useState(false);
+  
   const [message1Len, setMessage1Len] = React.useState(1000);
-  const [message2Len, setMessage2Len] = React.useState(1000);
+  const [ message2Len, setMessage2Len ] = React.useState(1000);
+  
+  let [ message1Average, setMessage1Average ] = React.useState(0);
+  let [ message2Average, setMessage2Average ] = React.useState(0);
 
-  let startTime = new Date().getTime();
+  let [ Clicks, setClicks] = React.useState(0);
+
+  let [ startTime, setStartTime ] = React.useState(new Date().getTime());
   //console.log(`start time: ${startTime}`);
   useEffect(() => {
+    setStartTime(new Date().getTime());
     //console.log(`message 1 is ${message1}`);
     //console.log(`message 2 is ${message2}`);
     (async () => {
@@ -38,8 +46,23 @@ function App() {
           );
         });
     })();
+
+
+    setClicks(Clicks + 1);
+
+
   }, [clicked]);
 
+
+  useEffect(() => {
+    setMessage1Average (message1Average + (new Date().getTime() - startTime) / Clicks)
+    console.log(`message1average${message1Average}`);
+
+  }, [message1]);
+
+  useEffect(() => {
+    setMessage2Average (message2Average + (new Date().getTime() - startTime) / Clicks)
+  }, [message2]);
   return (
     <div className="flex min-h-screen px-5 flex-col min-w-screen max-w-screen
     ">
@@ -69,6 +92,12 @@ function App() {
           value={message2Len}
           onChange={(e) => setMessage2Len(e.currentTarget.value)}
         />
+      </div>
+
+      <div className="m-auto flex flex-row gap-2">
+        <p>{`Worker 1👽 average duration: ${message1Average.toPrecision(2)} ms`}</p>
+        <p>{`Worker 2😊 average duration: ${message2Average.toPrecision(2)} ms`}</p>
+
       </div>
       <div className="m-auto flex flex-row gap-2">
         <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100 ">
