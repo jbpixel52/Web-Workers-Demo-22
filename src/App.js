@@ -17,8 +17,8 @@ function App() {
   const [message1Len, setMessage1Len] = React.useState(1000);
   const [ message2Len, setMessage2Len ] = React.useState(1000);
   
-  let [ message1Average, setMessage1Average ] = React.useState(0);
-  let [ message2Average, setMessage2Average ] = React.useState(0);
+  let [ message1Average, setMessage1Average ] = React.useState(1);
+  let [ message2Average, setMessage2Average ] = React.useState(1);
 
   let [ Clicks, setClicks] = React.useState(0);
 
