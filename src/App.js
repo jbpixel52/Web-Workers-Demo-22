@@ -4,64 +4,77 @@ import React, { useEffect } from "react";
 import { createWorkerFactory, useWorker } from "@shopify/react-web-worker";
 const createWorker = createWorkerFactory(() => import("./worker"));
 function App() {
+  let [Clicks, setClicks] = React.useState(0);
   const worker1 = useWorker(createWorker);
   const worker2 = useWorker(createWorker);
-
-  let [Clicks, setClicks] = React.useState(0);
-  let [startTime, setStartTime] = React.useState(new Date().getTime());
-
+  const worker3 = useWorker(createWorker);
+  const worker4 = useWorker(createWorker);
   const [clicked, setClicked] = React.useState(false);
-
   const [message1, setMessage1] = React.useState(null);
   const [message2, setMessage2] = React.useState(null);
+  const [message3, setMessage3] = React.useState(null);
+  const [message4, setMessage4] = React.useState(null);
+  const [wordsN, setWordsN] = React.useState(20);
 
-  const [message1Len, setMessage1Len] = React.useState(2000);
-  const [message2Len, setMessage2Len] = React.useState(2000);
+  const [finished, setFinished] = React.useState(false);
 
-  let [message1Average, setMessage1Average] = React.useState(0.1);
-  let [message2Average, setMessage2Average] = React.useState(0.1);
+  const [startTime, setStartTime] = React.useState(new Date().getTime());
+  const [execTime, setExecTime] = React.useState(0);
+
+  const [serialState, setEnableSerial] = React.useState(false);
+  const serialWorker = useWorker(createWorker);
+  const [serialMessage, setSerialMessage] = React.useState(null);
 
   useEffect(() => {
+    setStartTime(new Date().getTime());
+
     (async () => {
       // Note: in your actual app code, make sure to check if Home
       // is still mounted before setting state asynchronously!
 
       const webWorkerMessage1 = await worker1
-        .Generator(message1Len, 1)
+        .Generator(wordsN / 2, 1)
         .then((response) => {
           setMessage1(response);
-          console.log(
-            `message 1 duration: ${new Date().getTime() - startTime}`
-          );
-          setMessage1Average((new Date().getTime() - startTime));
         });
       const webWorkerMessage2 = await worker2
-        .Generator(message2Len, 2)
+        .Generator(wordsN / 2, 2)
         .then((response) => {
           setMessage2(response);
-          console.log(`message 2 duration ${new Date().getTime() - startTime}`);
-          setMessage2Average((new Date().getTime() - startTime));
         });
+
+      const webWorkerMessage3 = await worker3
+        .Generator(wordsN / 2, 3)
+        .then((response) => {
+          setMessage3(response);
+        });
+
+      const webWorkerMessage4 = await worker4
+        .Generator(wordsN / 2, 4)
+        .then((response) => {
+          setMessage4(response);
+        });
+
+      if (serialState) {
+        const serialWebWorker = await serialWorker
+          .Generator(wordsN, 0)
+          .then((response) => {
+            setSerialMessage(response);
+          });
+      }
     })();
 
     setClicks(Clicks + 1);
+    setFinished(!finished);
+    setExecTime(new Date().getTime() - startTime);
   }, [clicked]);
-
-  // useEffect(() => {
-  //   setMessage1Average((message1Average + startTime) / Clicks);
-  //   console.log(`message1average ${message1Average}`);
-  // }, []);
-
-  // useEffect(() => {
-  //   setMessage1Average((message2Average + (new Date().getTime()-startTime)) / Clicks);
-  //   console.log(`message2average ${message2Average}`);
-  // }, []);
 
   const handleClick = () => {
     setClicks(Clicks + 1);
-    setStartTime(new Date().getTime());
     setClicked(!clicked);
   };
+
+  useEffect(() => {}, [message1]);
 
   return (
     <div
@@ -77,28 +90,31 @@ function App() {
       >
         CLICK ME TO INVENT WORDS!
       </button>
-      <div className="m-auto flex flex-row gap-2">
+
+      <div className="m-auto flex flex-row gap-2 p-2">
+        <p className="font-bold m-auto">Number of Words to generate:</p>
         <input
           className="w-20 rounded-full shadow-xl p-2"
           type="number"
           name="N1"
           id="worker1Length"
-          value={message1Len}
-          onChange={(e) => setMessage1Len(e.currentTarget.value)}
+          value={wordsN}
+          onChange={(e) => setWordsN(e.currentTarget.value)}
         />
-        <input
-          className="w-20 rounded-full shadow-xl p-2"
-          type="number"
-          name="N2"
-          id="worker2Length"
-          value={message2Len}
-          onChange={(e) => setMessage2Len(e.currentTarget.value)}
-        />
+        <span className="m-auto flex flex-row gap-2 p-2 font-bold">
+          Enable Serial Worker
+          <input
+            type={"checkbox"}
+            className="rounded-full flex m-auto"
+            onChange={() => {
+              setEnableSerial(!serialState);
+            }}
+          />
+        </span>
       </div>
 
       <div className="m-auto flex flex-row gap-10">
-        <p>{`Worker 1👽 average duration: ${message1Average} ms`}</p>
-        <p>{`Worker 2😊 average duration: ${message2Average} ms`}</p>
+        <p>{`Execution Time Outside of Web Workers: ${execTime} ms.`}</p>
       </div>
       <div className="m-auto flex flex-row gap-2">
         <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100 ">
@@ -107,6 +123,22 @@ function App() {
         <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100 ">
           {message2}
         </div>
+
+        <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100 ">
+          {message3}
+        </div>
+
+        <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100 ">
+          {message4}
+        </div>
+
+        {serialState ? (
+          <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-l from-rose-500 to-teal-500 ">
+            {serialMessage}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

@@ -6,6 +6,9 @@ export function Generator(iterations, id) {
   //RULES. =>   prefix + base + sufix
   let baseLength = 7;
   let maxLength = baseLength;
+  const workerStartTime = new Date().getTime();
+  let workerEndTime;
+  let timeDif;
   while (generated.length < iterations) {
     var prefix = parsed[randomParsed()];
     prefix = prefix.slice(0, prefix.length / 2);
@@ -23,5 +26,17 @@ export function Generator(iterations, id) {
       maxLength = baseLength;
     }
   }
+
+  workerEndTime = new Date().getTime();
+  timeDif = workerEndTime - workerStartTime;
+
+  console.log(`Worker ${id} finished in ${timeDif} ms.`);
+
+  generated.unshift(
+    <div className="m-auto font-bold">
+      <p>{`👷‍♂️Worker ${id === 0 ? "serial" : id} ⏲️ ${timeDif}ms.`}</p>
+    </div>
+  );
+
   return generated;
 }
