@@ -137,6 +137,7 @@ function App() {
           <></>
         )}
       </div>
+      <a  className="m-auto" href="https://github.com/jbpixel52/Web-Workers-Demo-22">Source for this project.</a>
     </div>
   );
 }
