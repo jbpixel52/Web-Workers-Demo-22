@@ -29,9 +29,6 @@ function App() {
     setStartTime(new Date().getTime());
 
     (async () => {
-      // Note: in your actual app code, make sure to check if Home
-      // is still mounted before setting state asynchronously!
-
       const webWorkerMessage1 = await worker1
         .Generator(wordsN / 2, 1)
         .then((response) => {
@@ -85,7 +82,7 @@ function App() {
         <b>WEB WORKERS</b> 🤖 say giberish...
       </h1>
       <button
-        className="block m-auto w-fit h-fit text-xl rounded-full p-5 font-bold shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100"
+        className="block m-auto w-fit h-fit text-xl rounded-full p-5 font-bold shadow-2xl bg-white outline-dashed"
         onClick={() => handleClick()}
       >
         CLICK ME TO INVENT WORDS!
@@ -94,7 +91,7 @@ function App() {
       <div className="m-auto flex flex-row gap-2 p-2">
         <p className="font-bold m-auto">Number of Words to generate:</p>
         <input
-          className="w-20 rounded-full shadow-xl p-2"
+          className="w-20 rounded-xl font-bold outline-dashed bg-transparent shadow-xl p-2"
           type="number"
           name="N1"
           id="worker1Length"
@@ -105,7 +102,7 @@ function App() {
           Enable Serial Worker
           <input
             type={"checkbox"}
-            className="rounded-full flex m-auto"
+            className="rounded-full fle w-10 h-10 bg-transparent"
             onChange={() => {
               setEnableSerial(!serialState);
             }}
@@ -113,10 +110,10 @@ function App() {
         </span>
       </div>
 
-      <div className="m-auto flex flex-row gap-10">
-        <p>{`Execution Time Outside of Web Workers: ${execTime} ms.`}</p>
+      <div className="m-auto flex flex-row gap-10 underline italic">
+        <p>{`Main Thread Exec. Time: `}<b>{`${execTime} ms` }</b></p>
       </div>
-      <div className="m-auto flex flex-row gap-2">
+      <div className="m-auto flex flex-row gap-2 flex-wrap items-center m-auto">
         <div className="flex flex-wrap max-w-1/2 gap-3 rounded p-2 shadow-2xl bg-gradient-to-r from-rose-100 to-teal-100 ">
           {message1}
         </div>
